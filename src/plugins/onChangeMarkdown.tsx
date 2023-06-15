@@ -45,6 +45,8 @@ function transformState(
         const withBrs = markdown
             // https://github.com/markedjs/marked/issues/190#issuecomment-865303317
             .replace(/\n(?=\n)/g, "\n\n<br>\n")
+            .replace(/```html/g, '').replace(/```/g, '')
+
             // When escape(markdown) with block quotes we end up with the following:
             // '&gt; block quote text'
             // and need to convert it back to the original, so the markdown is respected

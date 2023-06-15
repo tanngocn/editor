@@ -192,7 +192,7 @@ export default function Editor(props: any): JSX.Element {
                                     .replace(/&amp;/g, "&")
                                     .replace(/&#39;/g, "'")
                                     .replace(/&lt;/g, "<")
-                                    .replace(/&gt;/g, ">");
+                                    .replace(/&gt;/g, ">")
 
                                 if (!str) {
                                     // if string is empty and this is not an update
@@ -294,7 +294,7 @@ export default function Editor(props: any): JSX.Element {
                 {shouldUseLexicalContextMenu && <ContextMenuPlugin />}
                 <ActionsPlugin isRichText={isRichText} />
             </div>
-            {showTreeView && <TreeViewPlugin />}
+            {/* {showTreeView && <TreeViewPlugin />} */}
         </>
     );
 }
