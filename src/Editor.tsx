@@ -70,12 +70,15 @@ import YouTubePlugin from './plugins/YouTubePlugin';
 import PlaygroundEditorTheme from './themes/PlaygroundEditorTheme';
 import ContentEditable from './ui/ContentEditable';
 import Placeholder from './ui/Placeholder';
+import { $createParagraphNode, $getRoot } from 'lexical';
+import { $convertFromMarkdownString, TRANSFORMERS } from '@lexical/markdown';
+import OnChangeMarkdown from './plugins/onChangeMarkdown';
 
 const skipCollaborationInit =
     // @ts-ignore
     window.parent != null && window.parent.frames.right === window;
 
-export default function Editor(): JSX.Element {
+export default function Editor(props: any): JSX.Element {
     const { historyState } = useSharedHistoryContext();
     const {
         settings: {
@@ -171,6 +174,40 @@ export default function Editor(): JSX.Element {
                             <HistoryPlugin externalHistoryState={historyState} />
                         )}
                         <RichTextPlugin
+                            initialEditorState={() => {
+                                let str = (props.value || "").replace(/\n\n<br>\n/g, "\n");
+
+                                // If we still have br tags, we're coming from Slate, apply
+                                // Slate list collapse and remove remaining br tags
+                                // https://github.com/facebook/lexical/issues/2208
+                                if (str.match(/<br>/g)) {
+                                    str = str
+                                        .replace(/^(\n)(?=\s*[-+\d.])/gm, "")
+                                        .replace(/<br>/g, "");
+                                }
+
+                                str = str
+                                    // Unescape HTML characters
+                                    .replace(/&quot;/g, '"')
+                                    .replace(/&amp;/g, "&")
+                                    .replace(/&#39;/g, "'")
+                                    .replace(/&lt;/g, "<")
+                                    .replace(/&gt;/g, ">");
+
+                                if (!str) {
+                                    // if string is empty and this is not an update
+                                    // don't bother trying to $convertFromMarkdown
+                                    // below we properly initialize with the correct state allowing for
+                                    // AutoFocus to work (as there is state to focus on), which works better
+                                    // than $convertFromMarkdownString('')
+                                    const root = $getRoot();
+                                    const paragraph = $createParagraphNode();
+                                    root.append(paragraph);
+                                    return;
+                                }
+
+                                $convertFromMarkdownString(str, TRANSFORMERS);
+                            }}
                             contentEditable={
                                 <div className="editor-scroller">
                                     <div className="editor" ref={onRef}>
@@ -181,6 +218,7 @@ export default function Editor(): JSX.Element {
                             placeholder={placeholder}
                             ErrorBoundary={LexicalErrorBoundary}
                         />
+                        <OnChangeMarkdown onChange={props.onChange} />
                         {/* <MarkdownShortcutPlugin /> */}
                         <CodeHighlightPlugin />
                         <ListPlugin />

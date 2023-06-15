@@ -130,7 +130,8 @@ function App(): JSX.Element {
     },
     theme: PlaygroundEditorTheme,
   };
-
+  const [markdown, setMarkdown] = React.useState("**Bold *Italic***");
+  console.log(markdown)
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <SharedHistoryContext>
@@ -142,7 +143,7 @@ function App(): JSX.Element {
               </a>
             </header>
             <div className="editor-shell">
-              <Editor />
+              <Editor value={markdown} onChange={setMarkdown} />
             </div>
             <Settings />
 
