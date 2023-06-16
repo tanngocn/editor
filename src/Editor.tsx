@@ -148,7 +148,7 @@ export default function Editor(props: any): JSX.Element {
                 {isMaxLength && <MaxLengthPlugin maxLength={30} />}
                 <DragDropPaste />
                 <AutoFocusPlugin />
-                <ClearEditorPlugin />
+                {/* <ClearEditorPlugin /> */}
                 <ComponentPickerPlugin />
                 <EmojiPickerPlugin />
                 <AutoEmbedPlugin />
@@ -218,7 +218,7 @@ export default function Editor(props: any): JSX.Element {
                             placeholder={placeholder}
                             ErrorBoundary={LexicalErrorBoundary}
                         />
-                        <OnChangeMarkdown onChange={props.onChange} />
+                        <OnChangeMarkdown onChange={props.onChange} transformers={null} />
                         {/* <MarkdownShortcutPlugin /> */}
                         <CodeHighlightPlugin />
                         <ListPlugin />
@@ -283,16 +283,16 @@ export default function Editor(props: any): JSX.Element {
                         <HistoryPlugin externalHistoryState={historyState} />
                     </>
                 )}
-                {(isCharLimit || isCharLimitUtf8) && (
+                {/* {(isCharLimit || isCharLimitUtf8) && (
                     <CharacterLimitPlugin
                         charset={isCharLimit ? 'UTF-16' : 'UTF-8'}
                         maxLength={5}
                     />
-                )}
+                )} */}
                 {isAutocomplete && <AutocompletePlugin />}
                 <div>{showTableOfContents && <TableOfContentsPlugin />}</div>
                 {shouldUseLexicalContextMenu && <ContextMenuPlugin />}
-                <ActionsPlugin isRichText={isRichText} />
+                {/* <ActionsPlugin isRichText={isRichText} /> */}
             </div>
             {/* {showTreeView && <TreeViewPlugin />} */}
         </>

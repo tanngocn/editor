@@ -27,6 +27,7 @@ import { TableContext } from './plugins/TablePlugin';
 // import TypingPerfPlugin from './plugins/TypingPerfPlugin';
 import Settings from './Settings';
 import PlaygroundEditorTheme from './themes/PlaygroundEditorTheme';
+import { $createCodeNode } from '@lexical/code';
 
 console.warn(
   'If you are profiling the playground app, please ensure you turn off the debug view. You can disable it by pressing on the settings control in the bottom-left of your screen and toggling the debug view setting.',
@@ -111,18 +112,20 @@ function prepopulatedRichText() {
     root.append(paragraph4);
   }
 }
+function customEditorState() {
+  const root = $getRoot();
+  if (root.getFirstChild() === null) {
+    const code = $createCodeNode();
+    code.setLanguage('html');
+    code.append($createTextNode(`<iframe width="560" height="315" src="https://www.youtube.com/embed/1v1hjbGlwgs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`))
+    root.append(code)
+  }
+}
 
 function App(): JSX.Element {
-  const {
-    settings: { isCollab, emptyEditor, measureTypingPerf },
-  } = useSettings();
 
   const initialConfig = {
-    editorState: isCollab
-      ? null
-      : emptyEditor
-        ? undefined
-        : prepopulatedRichText,
+    editorState: customEditorState,
     namespace: 'Playground',
     nodes: [...PlaygroundNodes],
     onError: (error: Error) => {
@@ -130,8 +133,8 @@ function App(): JSX.Element {
     },
     theme: PlaygroundEditorTheme,
   };
-  const [markdown, setMarkdown] = React.useState("**Bold *Italic***");
-  console.log(markdown)
+  const [markdown, setMarkdown] = React.useState(`<iframe width="560" height="315" src="https://www.youtube.com/embed/1v1hjbGlwgs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`);
+
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <SharedHistoryContext>
